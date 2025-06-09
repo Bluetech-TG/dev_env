@@ -2,7 +2,7 @@ services:
   mariadb_env:
     image: mariadb:10.4
     container_name: mariadb_server
-    restart: always
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MARIADB_DATABASE}
@@ -39,7 +39,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -76,7 +76,7 @@ services:
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog
-    restart: always
+    restart: no
     ports:
       - "8025:8025"
     networks:
@@ -85,7 +85,7 @@ services:
   php_fpm_env:
     image: php:8.2-fpm
     container_name: php_fpm
-    restart: always
+    restart: no
     volumes:
       - ./www:/var/www/html
     networks:
@@ -94,7 +94,7 @@ services:
   nginx_env:
     image: nginx:alpine
     container_name: nginx_server
-    restart: always
+    restart: no
     ports:
       - "8083:80"
     volumes:
@@ -104,11 +104,22 @@ services:
       - php_fpm_env
     networks:
       - devnet
-
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: always
+    ports:
+      - "9024:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - devnet
 volumes:
   mariadb_data:
   mysql_data:
   pgdata:
+  portainer_data:
 
 networks:
   devnet:
